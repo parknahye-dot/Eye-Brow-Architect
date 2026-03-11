@@ -114,21 +114,28 @@ public class LexService {
 
             RecognizeTextResponse response = lexClient.recognizeText(request);
 
-            // 1. Lex가 직접 응답을 준 경우 우선 사용
+            String intentName = response.sessionState().intent().name();
+            String state = response.sessionState().intent().state().toString();
+            log.info("Lex 응답 수신 [Intent: {}, State: {}]", intentName, state);
+
+            // 1. Lex가 직접 응답을 준 경우
             if (response.messages() != null && !response.messages().isEmpty()) {
                 String botResponse = response.messages().get(0).content();
-                // 에코 방지
-                if (text.trim().equals(botResponse.trim())) {
-                    return getHybridResponse(text);
-                }
+                log.info("Lex 제공 메시지: {}", botResponse);
                 return botResponse;
             }
 
-            // 2. Lex가 응답을 주지 못한 경우 (빈 봇 등), 하이브리드 로컬 로직 가동
+            // 2. Lex가 응답을 주지 못했지만 상태가 ReadyForFulfillment인 경우
+            if ("ReadyForFulfillment".equals(state)) {
+                log.info("대화가 성공적으로 완료단계(Fulfillment)에 도달했습니다.");
+                return getHybridResponse(text);
+            }
+
+            // 3. 그 외의 경우 하이브리드 로직
             return getHybridResponse(text);
 
         } catch (Exception e) {
-            log.error("Lex 응답 중 오류 발생: {}", e.getMessage());
+            log.error("Lex 응답 중 오류 발생: {}", e.getMessage(), e);
             return "상담 서비스 연동 중 일시적인 문제가 발생했습니다. (AWS Lex Connection Error)";
         }
     }

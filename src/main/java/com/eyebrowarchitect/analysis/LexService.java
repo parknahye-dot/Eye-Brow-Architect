@@ -60,7 +60,7 @@ public class LexService {
             this.lexClient = LexRuntimeV2Client.builder()
                     .region(Region.of(region))
                     .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsBasicCredentials.create(finalAccessKey, finalSecretKey)))
+                            AwsBasicCredentials.create(finalAccessKey.trim(), finalSecretKey.trim())))
                     .build();
         } else {
             log.warn("AWS 자격 증명이 설정되지 않았습니다. 기본 환경 변수 체인을 시도합니다.");

@@ -41,8 +41,9 @@ public class S3Service {
         String fileName = UUID.randomUUID().toString() + "_" + originalFilename;
 
         // Force local or fallback if S3 is not configured
-        if (forceLocal || "NONE".equals(accessKey)) {
-            log.info("로컬 저장 모드 작동 중 (forceLocal: {}, accessKey: {})", forceLocal, accessKey);
+        String trimmedKey = accessKey != null ? accessKey.trim() : "NONE";
+        if (forceLocal || "NONE".equals(trimmedKey)) {
+            log.info("로컬 저장 모드 작동 중 (forceLocal: {}, accessKey: [TRIMMED])", forceLocal);
             return saveToFileSystem(fileBytes, fileName);
         }
 

@@ -11,7 +11,8 @@ from mediapipe.tasks.python import vision
 app = FastAPI()
 
 # MediaPipe Face Landmarker 설정
-model_path = 'face_landmarker.task'
+current_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(current_dir, 'face_landmarker.task')
 BaseOptions = mp.tasks.BaseOptions
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
 FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions

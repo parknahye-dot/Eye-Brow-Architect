@@ -71,9 +71,9 @@ jobs:
           import os
           with open('AWS/eks_deployment.yaml', 'r') as f:
               content = f.read()
-          content = content.replace('${AWS_ACCOUNT_ID}', os.environ.get('TARGET_ACCOUNT_ID', ''))
-          content = content.replace('${AWS_ACCESS_KEY_ID}', os.environ.get('TARGET_ACCESS_KEY', ''))
-          content = content.replace('${AWS_SECRET_ACCESS_KEY}', os.environ.get('TARGET_SECRET_KEY', ''))
+          content = content.replace('${AWS_ACCOUNT_ID}', os.environ.get('TARGET_ACCOUNT_ID', '').strip())
+          content = content.replace('${AWS_ACCESS_KEY_ID}', os.environ.get('TARGET_ACCESS_KEY', '').strip())
+          content = content.replace('${AWS_SECRET_ACCESS_KEY}', os.environ.get('TARGET_SECRET_KEY', '').strip())
           with open('AWS/eks_deployment_ready.yaml', 'w') as f:
               f.write(content)
           EOF

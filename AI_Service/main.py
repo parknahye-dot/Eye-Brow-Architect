@@ -56,21 +56,24 @@ def get_eyeliner_points(landmarks):
     
     return left_eyeliner, right_eyeliner
 
-def calculate_face_shape_refined(landmarks):
+def calculate_face_shape_refined(landmarks, img_w, img_h):
     top = landmarks[10]
     bottom = landmarks[152]
     left_cheek = landmarks[234]
     right_cheek = landmarks[454]
     
-    height = bottom.y - top.y
-    width = right_cheek.x - left_cheek.x
+    # 정규화된 좌표를 실제 픽셀 거리로 변환하여 비율 계산
+    real_height = (bottom.y - top.y) * img_h
+    real_width = (right_cheek.x - left_cheek.x) * img_w
     
-    if width <= 0: return "계란형"
-    ratio = height / width
+    if real_width <= 0: return "계란형"
+    ratio = real_height / real_width
     
-    # 얼굴형 한글화 매핑
-    if ratio > 1.35: return "긴 얼굴형"
-    elif ratio < 1.1: return "둥근 얼굴형"
+    print(f"DEBUG: Real H={real_height:.2f}, W={real_width:.2f}, Ratio={ratio:.2f} (Img: {img_w}x{img_h})")
+
+    # 얼굴형 한글화 매핑 및 임계값 조정
+    if ratio > 1.45: return "긴 얼굴형"
+    elif ratio < 1.2: return "둥근 얼굴형"
     else: return "계란형"
 
 def get_face_outline(landmarks):
@@ -115,7 +118,10 @@ async def analyze(file: UploadFile = File(...)):
             }
             
         landmarks = detection_result.face_landmarks[0]
-        face_shape = calculate_face_shape_refined(landmarks)
+        
+        # 이미지 크기 가져오기
+        img_h, img_w = image.shape[:2]
+        face_shape = calculate_face_shape_refined(landmarks, img_w, img_h)
         left_eyebrow, right_eyebrow = get_eyebrow_points(landmarks)
         left_eyeliner, right_eyeliner = get_eyeliner_points(landmarks)
         face_outline = get_face_outline(landmarks)

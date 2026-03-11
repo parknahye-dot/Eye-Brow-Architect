@@ -69,6 +69,10 @@ spec:
           value: "nahye_admin"
         - name: SPRING_DATASOURCE_PASSWORD
           value: "nahye1234"
+        - name: AWS_ACCESS_KEY_ID
+          value: "${AWS_ACCESS_KEY_ID}"
+        - name: AWS_SECRET_ACCESS_KEY
+          value: "${AWS_SECRET_ACCESS_KEY}"
 ---
 apiVersion: v1
 kind: Service

@@ -63,9 +63,13 @@ jobs:
       - name: Deploy to EKS
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          # Replace placeholder in deployment manifest
+          # Replace placeholders in deployment manifest
           sed -i "s/\${AWS_ACCOUNT_ID}/$AWS_ACCOUNT_ID/g" AWS/eks_deployment.yaml
+          sed -i "s|\${AWS_ACCESS_KEY_ID}|$AWS_ACCESS_KEY_ID|g" AWS/eks_deployment.yaml
+          sed -i "s|\${AWS_SECRET_ACCESS_KEY}|$AWS_SECRET_ACCESS_KEY|g" AWS/eks_deployment.yaml
           kubectl apply -f AWS/eks_deployment.yaml
           # Force restart deployments to pull the latest image updates
           kubectl rollout restart deployment/frontend

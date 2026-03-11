@@ -62,12 +62,18 @@ jobs:
 
       - name: Deploy to EKS
         env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TARGET_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          TARGET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TARGET_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          # Use envsubst to safely replace placeholders in the manifest
-          envsubst < AWS/eks_deployment.yaml > AWS/eks_deployment_ready.yaml
+          # Use python for safe replacement (avoids sed delimiter issues and shadows)
+          python3 -c "import os; \
+            content = open('AWS/eks_deployment.yaml').read(); \
+            content = content.replace('${AWS_ACCOUNT_ID}', os.environ['TARGET_ACCOUNT_ID']); \
+            content = content.replace('${AWS_ACCESS_KEY_ID}', os.environ['TARGET_ACCESS_KEY']); \
+            content = content.replace('${AWS_SECRET_ACCESS_KEY}', os.environ['TARGET_SECRET_KEY']); \
+            open('AWS/eks_deployment_ready.yaml', 'w').write(content)"
+          
           kubectl apply -f AWS/eks_deployment_ready.yaml
           # Force restart deployments to pull the latest image updates
           kubectl rollout restart deployment/frontend

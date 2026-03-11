@@ -67,3 +67,7 @@ jobs:
           # Replace placeholder in deployment manifest
           sed -i "s/\${AWS_ACCOUNT_ID}/$AWS_ACCOUNT_ID/g" AWS/eks_deployment.yaml
           kubectl apply -f AWS/eks_deployment.yaml
+          # Force restart deployments to pull the latest image updates
+          kubectl rollout restart deployment/frontend
+          kubectl rollout restart deployment/backend
+          kubectl rollout restart deployment/ai-service

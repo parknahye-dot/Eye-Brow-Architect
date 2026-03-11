@@ -13,13 +13,22 @@ app = FastAPI()
 # MediaPipe Face Landmarker 설정
 current_dir = os.path.dirname(os.path.abspath(__file__))
 model_path = os.path.join(current_dir, 'face_landmarker.task')
+
+try:
+    with open(model_path, "rb") as f:
+        model_data = f.read()
+    print(f"Model file loaded successfully: {len(model_data)} bytes")
+except Exception as e:
+    print(f"FAILED to load model file: {e}")
+    raise e
+
 BaseOptions = mp.tasks.BaseOptions
 FaceLandmarker = mp.tasks.vision.FaceLandmarker
 FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions
 VisionRunningMode = mp.tasks.vision.RunningMode
 
 options = FaceLandmarkerOptions(
-    base_options=BaseOptions(model_asset_path=model_path),
+    base_options=BaseOptions(model_asset_buffer=model_data),
     running_mode=VisionRunningMode.IMAGE)
 
 landmarker = FaceLandmarker.create_from_options(options)

@@ -41,9 +41,16 @@ public class LexService {
 
     @PostConstruct
     public void init() {
-        // 우선순위: application.properties > System Environment Variables
-        String finalAccessKey = !"NONE".equals(accessKey) ? accessKey : System.getenv("AWS_ACCESS_KEY");
+        // 우선순위: application.properties > AWS_ACCESS_KEY_ID > AWS_ACCESS_KEY
+        String finalAccessKey = !"NONE".equals(accessKey) ? accessKey : System.getenv("AWS_ACCESS_KEY_ID");
+        if (finalAccessKey == null)
+            finalAccessKey = System.getenv("AWS_ACCESS_KEY");
+
         String finalSecretKey = !"NONE".equals(secretKey) ? secretKey : System.getenv("AWS_SECRET_KEY");
+        if (finalSecretKey == null)
+            finalSecretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
+        if (finalSecretKey == null)
+            finalSecretKey = System.getenv("AWS_SECRET_KEY");
 
         if (finalAccessKey != null && finalSecretKey != null && !finalAccessKey.isEmpty()
                 && !"NONE".equals(finalAccessKey)) {

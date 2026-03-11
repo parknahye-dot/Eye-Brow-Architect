@@ -119,6 +119,50 @@ resource "aws_s3_bucket" "image_storage" {
   force_destroy = true
 }
 
+# S3 CORS 설정 (브라우저에서 이미지 엑박 방지)
+resource "aws_s3_bucket_cors_configuration" "image_storage_cors" {
+  bucket = aws_s3_bucket.image_storage.id
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "HEAD"]
+    allowed_origins = [
+      "http://localhost:5173", # 로컬 개발용
+      "http://a7f1bcb371edf40c98e81362a1275c97-1744008740.ap-northeast-2.elb.amazonaws.com" # 현재 ELB 주소
+    ]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
+# S3 퍼블릭 액세스 차단 해제
+resource "aws_s3_bucket_public_access_block" "image_storage_public_access" {
+  bucket = aws_s3_bucket.image_storage.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# S3 모든 사람 읽기 권한 정책 추가
+resource "aws_s3_bucket_policy" "allow_public_read" {
+  bucket = aws_s3_bucket.image_storage.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.image_storage.arn}/*"
+      },
+    ]
+  })
+  depends_on = [aws_s3_bucket_public_access_block.image_storage_public_access]
+}
+
 resource "aws_lexv2models_bot" "brow_architect_bot" {
   name                        = "BrowArchitectBot"
   role_arn                    = "arn:aws:iam::973759794851:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_H45R3CI972O"

@@ -11,10 +11,10 @@ target/
 
 # Python / AI_Service
 AI_Service/venv/
-AI_Service/__pycache__/
-*.pyc
-AI_Service/.env
-AI_Service/*.task
+# AI_Service/__pycache__/
+# *.pyc
+# AI_Service/.env
+# AI_Service/*.task  <-- AI 모델 파일 포함을 위해 주석 처리
 
 # Node / Frontend
 Frontend/node_modules/

@@ -44,14 +44,8 @@ S3 버킷 권한(CORS) 설정
 ![alt text](<image/image copy 3.png>) 
 
 Amazon Lex V2 (챗봇 상태)
-
-IAM 역할 (Security & Permissions)
-경로: IAM -> Roles (역할) -> brow-architect가 포함된 역할들 리스트.
-
-EC2 인스턴스 목록 (실제 서버 장비)
-경로: EC2 -> 인스턴스 -> 인스턴스 상태가 **'실행 중'**인 리스트.
+![alt text](image/image-11.png)
 
 인터넷 게이트웨이(IGW) 또는 라우트 테이블
-경로: VPC -> 인터넷 게이트웨이 또는 라우팅 테이블.
-
+![alt text](image/image-10.png)
 

@@ -43,19 +43,19 @@ public class LexService {
     public void init() {
         // 우선순위: application.properties > AWS_ACCESS_KEY_ID > AWS_ACCESS_KEY
         String finalAccessKey = !"NONE".equals(accessKey) ? accessKey : System.getenv("AWS_ACCESS_KEY_ID");
-        if (finalAccessKey == null)
+        if (finalAccessKey == null || finalAccessKey.isEmpty() || "NONE".equals(finalAccessKey)) {
             finalAccessKey = System.getenv("AWS_ACCESS_KEY");
+        }
 
-        String finalSecretKey = !"NONE".equals(secretKey) ? secretKey : System.getenv("AWS_SECRET_KEY");
-        if (finalSecretKey == null)
-            finalSecretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
-        if (finalSecretKey == null)
+        String finalSecretKey = !"NONE".equals(secretKey) ? secretKey : System.getenv("AWS_SECRET_ACCESS_KEY");
+        if (finalSecretKey == null || finalSecretKey.isEmpty() || "NONE".equals(finalSecretKey)) {
             finalSecretKey = System.getenv("AWS_SECRET_KEY");
+        }
 
-        if (finalAccessKey != null && finalSecretKey != null && !finalAccessKey.isEmpty()
-                && !"NONE".equals(finalAccessKey)) {
-            log.info("AWS Lex 클라이언트를 명시적 자격 증명으로 초기화합니다. (BotID: {}, AliasID: {})",
-                    botId, botAliasId);
+        if (finalAccessKey != null && !finalAccessKey.isEmpty() && !"NONE".equals(finalAccessKey)
+                && finalSecretKey != null && !finalSecretKey.isEmpty() && !"NONE".equals(finalSecretKey)) {
+            log.info("AWS Lex 클라이언트를 명시적 자격 증명으로 초기화합니다. (BotID: {}, AliasID: {}, Region: {})",
+                    botId, botAliasId, region);
 
             this.lexClient = LexRuntimeV2Client.builder()
                     .region(Region.of(region))
@@ -109,10 +109,8 @@ public class LexService {
             return getHybridResponse(text);
 
         } catch (Exception e) {
-            System.out.println("DEBUG: Lex Call Failed!");
-            e.printStackTrace(System.out);
-            log.error("Lex 응답 중 오류 발생: {}", e.getMessage(), e);
-            return "상담 서비스 연동 중 일시적인 문제가 발생했습니다. (AWS Lex Connection Error)";
+            log.error("Lex 응답 중 오류 발생 [BotID: {}, AliasID: {}]: {}", botId, botAliasId, e.getMessage(), e);
+            return "상담 서비스 연동 중 일시적인 문제가 발생했습니다. (AWS Lex Connection Error: " + e.getMessage() + ")";
         }
     }
 

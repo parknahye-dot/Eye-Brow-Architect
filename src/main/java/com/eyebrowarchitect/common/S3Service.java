@@ -48,11 +48,14 @@ public class S3Service {
         }
 
         try {
-            log.info("S3 업로드 시도 중... (Bucket: {})", bucket);
+            log.info("S3 업로드 시도 중... (Bucket: {}, FileName: {})", bucket, fileName);
             S3Resource resource = s3Template.upload(bucket, fileName, new java.io.ByteArrayInputStream(fileBytes));
-            return Objects.requireNonNull(resource.getURL()).toString();
+            String url = Objects.requireNonNull(resource.getURL()).toString();
+            log.info("S3 업로드 성공: {}", url);
+            return url;
         } catch (Exception e) {
-            log.error("S3 업로드 실패, 로컬 저장소로 대체합니다: {}", e.getMessage());
+            log.error("S3 업로드 실패! 원인: {}", e.getMessage(), e);
+            log.info("로컬 저장소로 fallback을 시도합니다.");
             return saveToFileSystem(fileBytes, fileName);
         }
     }

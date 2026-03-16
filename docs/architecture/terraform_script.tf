@@ -135,7 +135,7 @@ resource "aws_s3_bucket_cors_configuration" "image_storage_cors" {
     allowed_methods = ["GET", "HEAD"]
     allowed_origins = [
       "http://localhost:5173", # 로컬 개발용
-      "http://a7f1bcb371edf40c98e81362a1275c97-1744008740.ap-northeast-2.elb.amazonaws.com" # 현재 ELB 주소
+      "http://ad2ba515f6b304c09942b06dfce1ac3e-1696533767.ap-northeast-2.elb.amazonaws.com" # 새로운 ELB 주소
     ]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000

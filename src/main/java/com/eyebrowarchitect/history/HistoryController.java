@@ -1,6 +1,5 @@
 package com.eyebrowarchitect.history;
 
-import com.eyebrowarchitect.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HistoryController {
     private final HistoryService historyService;
-    private final UserService userService;
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AnalysisHistory>> getHistory(@PathVariable Integer userId) {

@@ -75,6 +75,18 @@ spec:
           value: "TSTALIASID"
         - name: SPRING_APPLICATION_JSON
           value: '{"amazon":{"lex":{"botId":"93G9BEFBTR","botAliasId":"TSTALIASID"}}}'
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: AWS_SECRET_ACCESS_KEY
+        - name: APP_STORAGE_LOCAL
+          value: "false"
 ---
 apiVersion: v1
 kind: Service

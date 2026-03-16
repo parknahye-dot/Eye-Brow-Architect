@@ -33,9 +33,6 @@ Frontend/.env.local
 terraform.tfstate*
 *.pem
 
-# AWS Secrets (절대 GitHub에 올리지 않음)
-AWS/aws-secret.yaml
-
 # Local Uploads
 uploads/
 server_debug.log*
